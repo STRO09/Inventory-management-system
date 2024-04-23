@@ -32,37 +32,12 @@ const PlaceOrder = () => {
     // Load prediction models from pickle files when the component mounts
     const loadPredictionModels = async () => {
       try {
-        const modelPens = await import('./pickles/Pens_rfmodel.pkl'); // Example path to the .pkl files
-        const modelNotebooks = await import('./pickles/Notebooks_rfmodel.pkl');
-        const modelClips = await import('./pickles/Clips_rfmodel.pkl');
-        const modelErasers = await import('./pickles/Erasers_rfmodel.pkl');
-        const modelFolders = await import('./pickles/Folders_rfmodel.pkl');
-        const modelInk = await import('./pickles/Ink_rfmodel.pkl');
-        const modelMiniDrafters = await import('./pickles/MiniDrafters_rfmodel.pkl');
-        const modelPencils = await import('./pickles/Pencils_rfmodel.pkl');
-        const modelPrintingpages = await import('./pickles/Printingpages_rfmodel.pkl');
-        const modelRoller = await import('./pickles/Roller_rfmodel.pkl');
-        const modelScales = await import('./pickles/Scales_rfmodel.pkl');
-        const modelSharpeners = await import('./pickles/Sharpeners_rfmodel.pkl');
-        const modelStaplers = await import('./pickles/Staplers_rfmodel.pkl');
-
-        // Store the loaded models in a dictionary
-        const models = {
-          Pens: modelPens,
-          Notebooks: modelNotebooks,
-          Clips: modelClips,
-          Erasers: modelErasers,
-          Folders: modelFolders,
-          Ink: modelInk,
-          MiniDrafters: modelMiniDrafters,
-          Pencils: modelPencils,
-          Printingpages: modelPrintingpages,
-          Roller: modelRoller,
-          Scales: modelScales,
-          Sharpeners: modelSharpeners,
-          Staplers: modelStaplers,
-        };
-
+        const models = {};
+        for (const product of productList) {
+          const modelName = product.item_name.replace(' ', '');
+          const model = await import(`./pickles/${modelName}_rfmodel.pkl`);
+          models[product.item_name] = model;
+        }
         setPredictionModels(models);
       } catch (error) {
         console.error('Error loading prediction models:', error);
@@ -93,7 +68,7 @@ const PlaceOrder = () => {
     if (selectedProduct && predictionModels[selectedProduct]) {
       const model = predictionModels[selectedProduct];
       // Use the prediction model to predict future sales
-      const predictedSales = model.predict(/* Provide necessary input features for prediction */);
+      const predictedSales = model.predict(quantity);
       setPredictedSales(predictedSales);
 
       // Calculate safety stock (5% of predicted sales) and suggested order quantity
@@ -105,14 +80,17 @@ const PlaceOrder = () => {
   };
   
   const confirmOrder = () => {
-    if (selectedProduct && quantity) {
-      if (window.confirm(`Are you sure you want to place an order for ${quantity} ${selectedProduct}(s) at $${itemPrice} each, totaling $${totalPrice}?
+    if (!selectedProduct || !quantity || parseInt(quantity, 10) <= 0) {
+      console.error('Invalid selection or quantity.');
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to place an order for ${quantity} ${selectedProduct}(s) at $${itemPrice} each, totaling $${totalPrice}?
         Predicted Sales: ${predictedSales}
         Safety Stock: ${safetyStock}
         Suggested Order Quantity: ${suggestedOrderQuantity}`)) {
-        console.log('Order placed successfully.');
-        // Add logic here to send the order data to your backend to process the order
-      }
+      console.log('Order placed successfully.');
+      // Add logic here to send the order data to your backend to process the order
     }
   };
 
