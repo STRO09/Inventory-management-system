@@ -50,7 +50,7 @@ const PlaceOrder = () => {
   const handlePlaceOrder = () => {
     // Find the selected product in the productList array
     const selected = productList.find(product => product.item_name === selectedProduct);
-  
+    
     // Check if the selected product exists
     if (!selected) {
       console.error('Selected product does not exist in the database.');
@@ -58,19 +58,28 @@ const PlaceOrder = () => {
       setTotalPrice('');
       return;
     }
-  
+    
     // If the selected product exists, proceed with calculating the item price and total price
     setItemPrice(selected.item_price);
     const calculatedTotalPrice = parseFloat(selected.item_price) * parseInt(quantity, 10);
     setTotalPrice(calculatedTotalPrice);
-
+  
     // Perform prediction for the selected product
     if (selectedProduct && predictionModels[selectedProduct]) {
       const model = predictionModels[selectedProduct];
+       // Log the model object to inspect its structure
+      console.log('Model object:', model);
+      
+      // Prepare input features in the format required by the model
+      const inputFeatures = {
+        [`${selectedProduct}_Quantity`]: [parseInt(quantity, 10)],
+        [`${selectedProduct}_Price`]: [parseFloat(selected.item_price)]
+      };
+      
       // Use the prediction model to predict future sales
-      const predictedSales = model.predict(quantity);
+      const predictedSales = model.predict(inputFeatures);
       setPredictedSales(predictedSales);
-
+  
       // Calculate safety stock (5% of predicted sales) and suggested order quantity
       const calculatedSafetyStock = 0.05 * predictedSales;
       setSafetyStock(calculatedSafetyStock);
