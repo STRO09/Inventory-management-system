@@ -1,0 +1,35 @@
+.place-order-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* width: 130%; */
+  /* height: 250px; */
+  padding: 30vh;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group input {
+  width: 300px;
+}
+input[type="text"],
+input[type="number"],
+button {
+  padding: 15px; /* Add padding to inputs and button */
+  border: 1px solid #ccc; /* Add border for inputs */
+  border-radius: 5px; /* Add border radius for inputs */
+  font-size: 16px; /* Adjust font size */
+}
+
+button {
+  margin-top: 20px; /* Increase margin-top for spacing */
+  background-color: #007bff; /* Change button background color */
+  color: #fff; /* Change button text color */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+button:hover {
+  background-color: #0056b3; /* Change button background color on hover */
+}

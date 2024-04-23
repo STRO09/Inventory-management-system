@@ -1,0 +1,43 @@
+.project-container {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  height: 110vh;
+  padding-top: 50px;
+  padding-left: 80px;
+}
+  
+  .project-box {
+    width: 700px;
+    height: 180px;
+    text-align: center;
+    justify-content: center;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 400px;
+}
+div {
+    display: block;
+    unicode-bidi: isolate;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #9e9ea4;
+    font-family: "Montserrat", sans-serif;
+}
+  .project-box h2 {
+    padding-top: 10px;
+  }
+  .project-box button {
+    border-radius: 3px;
+    padding: 8px;
+    color: black;
+    border: none;
+    background-color: #007bff;
+  }
+  

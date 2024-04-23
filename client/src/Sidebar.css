@@ -1,0 +1,36 @@
+/* CSS for Product Dropdown */
+.sidebar-list-item .submenu {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  /* .submenu {
+    font-size: 18px;
+    color: #fff;
+  } */
+  
+  .sidebar-list-item:hover .submenu {
+    color: #fff;
+    display: block;
+  }
+  
+  .submenu li {
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .submenu li:hover {
+    background-color: #fff;
+  }
+  
+  .submenu a {
+    text-decoration: none;
+    color: #333; /* Text color */
+    display: block;
+  }
+  
+  .submenu a:hover {
+    color: #000; /* Text color on hover */
+  }
+  
