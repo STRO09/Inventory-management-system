@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Orderreal.css';
 
 // Define the static list of products
@@ -23,6 +23,54 @@ const PlaceOrder = () => {
   const [quantity, setQuantity] = useState('');
   const [itemPrice, setItemPrice] = useState('');
   const [totalPrice, setTotalPrice] = useState('');
+  const [predictedSales, setPredictedSales] = useState('');
+  const [safetyStock, setSafetyStock] = useState('');
+  const [suggestedOrderQuantity, setSuggestedOrderQuantity] = useState('');
+  const [predictionModels, setPredictionModels] = useState({}); // State to store prediction models
+
+  useEffect(() => {
+    // Load prediction models from pickle files when the component mounts
+    const loadPredictionModels = async () => {
+      try {
+        const modelPens = await import('./pickles/Pens_rfmodel.pkl'); // Example path to the .pkl files
+        const modelNotebooks = await import('./pickles/Notebooks_rfmodel.pkl');
+        const modelClips = await import('./pickles/Clips_rfmodel.pkl');
+        const modelErasers = await import('./pickles/Erasers_rfmodel.pkl');
+        const modelFolders = await import('./pickles/Folders_rfmodel.pkl');
+        const modelInk = await import('./pickles/Ink_rfmodel.pkl');
+        const modelMiniDrafters = await import('./pickles/MiniDrafters_rfmodel.pkl');
+        const modelPencils = await import('./pickles/Pencils_rfmodel.pkl');
+        const modelPrintingpages = await import('./pickles/Printingpages_rfmodel.pkl');
+        const modelRoller = await import('./pickles/Roller_rfmodel.pkl');
+        const modelScales = await import('./pickles/Scales_rfmodel.pkl');
+        const modelSharpeners = await import('./pickles/Sharpeners_rfmodel.pkl');
+        const modelStaplers = await import('./pickles/Staplers_rfmodel.pkl');
+
+        // Store the loaded models in a dictionary
+        const models = {
+          Pens: modelPens,
+          Notebooks: modelNotebooks,
+          Clips: modelClips,
+          Erasers: modelErasers,
+          Folders: modelFolders,
+          Ink: modelInk,
+          MiniDrafters: modelMiniDrafters,
+          Pencils: modelPencils,
+          Printingpages: modelPrintingpages,
+          Roller: modelRoller,
+          Scales: modelScales,
+          Sharpeners: modelSharpeners,
+          Staplers: modelStaplers,
+        };
+
+        setPredictionModels(models);
+      } catch (error) {
+        console.error('Error loading prediction models:', error);
+      }
+    };
+
+    loadPredictionModels();
+  }, []);
 
   const handlePlaceOrder = () => {
     // Find the selected product in the productList array
@@ -30,32 +78,38 @@ const PlaceOrder = () => {
   
     // Check if the selected product exists
     if (!selected) {
-      // If the selected product does not exist, provide feedback to the user
       console.error('Selected product does not exist in the database.');
-      // Optionally, you can reset itemPrice and totalPrice to empty values or display an error message to the user
       setItemPrice('');
       setTotalPrice('');
-      return; // Exit the function early as further processing is unnecessary
+      return;
     }
   
-    // If the selected product exists and quantity is valid, proceed with calculating the item price and total price
+    // If the selected product exists, proceed with calculating the item price and total price
     setItemPrice(selected.item_price);
     const calculatedTotalPrice = parseFloat(selected.item_price) * parseInt(quantity, 10);
     setTotalPrice(calculatedTotalPrice);
-  };
 
-  const handleQuantityChange = (e) => {
-    // Check if the entered quantity is a positive integer
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value > 0) {
-      // Update the quantity state if the entered value is valid
-      setQuantity(value);
+    // Perform prediction for the selected product
+    if (selectedProduct && predictionModels[selectedProduct]) {
+      const model = predictionModels[selectedProduct];
+      // Use the prediction model to predict future sales
+      const predictedSales = model.predict(/* Provide necessary input features for prediction */);
+      setPredictedSales(predictedSales);
+
+      // Calculate safety stock (5% of predicted sales) and suggested order quantity
+      const calculatedSafetyStock = 0.05 * predictedSales;
+      setSafetyStock(calculatedSafetyStock);
+      const calculatedSuggestedOrderQuantity = predictedSales + calculatedSafetyStock;
+      setSuggestedOrderQuantity(calculatedSuggestedOrderQuantity);
     }
   };
-
+  
   const confirmOrder = () => {
     if (selectedProduct && quantity) {
-      if (window.confirm(`Are you sure you want to place an order for ${quantity} ${selectedProduct}(s) at $${itemPrice} each, totaling $${totalPrice}?`)) {
+      if (window.confirm(`Are you sure you want to place an order for ${quantity} ${selectedProduct}(s) at $${itemPrice} each, totaling $${totalPrice}?
+        Predicted Sales: ${predictedSales}
+        Safety Stock: ${safetyStock}
+        Suggested Order Quantity: ${suggestedOrderQuantity}`)) {
         console.log('Order placed successfully.');
         // Add logic here to send the order data to your backend to process the order
       }
@@ -76,7 +130,7 @@ const PlaceOrder = () => {
       </div>
       <div className="form-group">
         <label>Quantity:</label>
-        <input type="number" value={quantity} onChange={handleQuantityChange} />
+        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
       </div>
       <div className="form-group">
         <button onClick={handlePlaceOrder}>Get Price</button>
@@ -91,6 +145,24 @@ const PlaceOrder = () => {
         <div className="form-group">
           <label>Total Price:</label>
           <span>{`$${totalPrice}`}</span>
+        </div>
+      )}
+      {predictedSales && (
+        <div className="form-group">
+          <label>Predicted Sales:</label>
+          <span>{predictedSales}</span>
+        </div>
+      )}
+      {safetyStock && (
+        <div className="form-group">
+          <label>Safety Stock:</label>
+          <span>{safetyStock}</span>
+        </div>
+      )}
+      {suggestedOrderQuantity && (
+        <div className="form-group">
+          <label>Suggested Order Quantity:</label>
+          <span>{suggestedOrderQuantity}</span>
         </div>
       )}
       {totalPrice && (
