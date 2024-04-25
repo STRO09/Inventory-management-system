@@ -6,18 +6,23 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Load prediction models from pickle files
-prediction_models = {}
-# Assume productList is defined elsewhere
-productList = ['Pens', 'Notebooks', 'Staplers', 'Folders', 'Pencils', 'Mini Drafters', 'Erasers', 'Sharpeners', 'Ink', 'Printing pages', 'Scales', 'Roller', 'Clips']
-for product in productList:
-    model_name = product.replace(' ', '')
-    with open(f'models/{model_name}_rfmodel.pkl', 'rb') as model_file:
-        model = pickle.load(model_file)
-        prediction_models[product] = model
+def load_prediction_models():
+    prediction_models = {}
+    # Assume productList is defined elsewhere
+    productList = ['Pens', 'Notebooks', 'Staplers', 'Folders', 'Pencils', 'Mini Drafters', 'Erasers', 'Sharpeners', 'Ink', 'Printing pages', 'Scales', 'Roller', 'Clips']
+    for product in productList:
+        model_name = product.replace(' ', '')
+        with open(f'models/{model_name}_rfmodel.pkl', 'rb') as model_file:
+            model = pickle.load(model_file)
+            prediction_models[product] = model
+    return prediction_models
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        # Reload prediction models for each request
+        prediction_models = load_prediction_models()
+
         # Get the product and input data from the request
         product = request.json['product']
         past_month_quantity_sold = request.json['data']['past_month_quantity_sold']
@@ -30,13 +35,14 @@ def predict():
 
         # Perform prediction
         prediction = model.predict([[past_month_quantity_sold, item_price]])[0]
+        predq = prediction / item_price
 
         # Calculate safety stock and suggested order quantity
-        safety_stock = prediction * 0.05
-        suggested_order_quantity = prediction + safety_stock
+        safety_stock = int(predq * 0.05)
+        suggested_order_quantity = predq+ safety_stock
 
         return jsonify({
-            'prediction': prediction,
+            'prediction': predq,
             'safety_stock': safety_stock,
             'suggested_order_quantity': suggested_order_quantity
         })

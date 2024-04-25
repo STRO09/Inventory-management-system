@@ -1,9 +1,10 @@
+// Ordersreal.jsx
 import React, { useState } from 'react';
 
 const PlaceOrder = () => {
   const [selectedProduct, setSelectedProduct] = useState('');
   const [pastMonthQuantitySold, setPastMonthQuantitySold] = useState('');
-  const [prediction, setPrediction] = useState('');
+  const [predq, setPredq] = useState(''); // Update state variable
   const [safetyStock, setSafetyStock] = useState('');
   const [suggestedOrderQuantity, setSuggestedOrderQuantity] = useState('');
   const [productList, setProductList] = useState([
@@ -52,7 +53,7 @@ const PlaceOrder = () => {
       }
 
       const data = await response.json();
-      setPrediction(data.prediction);
+      setPredq(data.prediction);
       setSafetyStock(data.safety_stock);
       setSuggestedOrderQuantity(data.suggested_order_quantity);
     } catch (error) {
@@ -83,10 +84,10 @@ const PlaceOrder = () => {
       <div className="form-group">
         <button onClick={handlePlaceOrder}>Get Prediction</button>
       </div>
-      {/* Display prediction, safety stock, suggested order quantity */}
+      {/* Display predq instead of prediction */}
       <div className="form-group">
         <label>Prediction:</label>
-        <span>{prediction}</span>
+        <span>{predq}</span>
       </div>
       <div className="form-group">
         <label>Safety Stock:</label>
