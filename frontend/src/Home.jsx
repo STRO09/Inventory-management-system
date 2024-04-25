@@ -11,45 +11,45 @@ function Home() {
     const data = [
         {
           name: 'June',
-          uv: 4000,
-          pv: 2400,
-          amt: 2400,
+          sale: 400,
+          quantity: 600,
+          amt: 24000,
         },
         {
           name: 'July',
-          uv: 3000,
-          pv: 1398,
-          amt: 2210,
+          sale: 300,
+          quantity: 400,
+          amt: 20000,
         },
         {
           name: 'August',
-          uv: 2000,
-          pv: 5000,
-          amt: 2290,
+          sale: 200,
+          quantity: 300,
+          amt: 10000,
         },
         {
           name: 'September',
-          uv: 2780,
-          pv: 7000,
-          amt: 2000,
+          sale: 270,
+          quantity: 700,
+          amt: 9000,
         },
         {
           name: 'October',
-          uv: 1890,
-          pv: 8000,
+          sale: 500,
+          quantity: 700,
           amt: 2181,
         },
         {
           name: 'November',
-          uv: 2390,
-          pv: 3800,
-          amt: 2500,
+          sale: 350,
+          quantity: 500,
+          amt: 7750,
         },
         {
           name: 'December',
-          uv: 3490,
-          pv: 4000,
-          amt: 2100,
+          sale: 440,
+          quantity: 700,
+          amt: 21000,
         },
       ];
      
@@ -63,17 +63,17 @@ function Home() {
         <div className='main-cards'>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>PRODUCTS</h3>
+                    <h3>SALE</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>300</h1>
+                <h1>30000</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>CATEGORIES</h3>
+                    <h3>PRODUCT</h3>
                     <BsFillGrid3X3GapFill className='card_icon'/>
                 </div>
-                <h1>12</h1>
+                <h1>13</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
@@ -87,7 +87,7 @@ function Home() {
                     <h3>ALERTS</h3>
                     <BsFillBellFill className='card_icon'/>
                 </div>
-                <h1>42</h1>
+                <h1>02</h1>
             </div>
         </div>
 
@@ -109,15 +109,15 @@ function Home() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
+                <Bar dataKey="quantity" fill="#8884d8" />
+                <Bar dataKey="sale" fill="#82ca9d" />
                 </BarChart>
             </ResponsiveContainer>
 
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                width={500}
-                height={300}
+                width={200}
+                height={200}
                 data={data}
                 margin={{
                     top: 5,
@@ -131,8 +131,8 @@ function Home() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="quantity" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="sale" stroke="#82ca9d" />
                 </LineChart>
             </ResponsiveContainer>
 
